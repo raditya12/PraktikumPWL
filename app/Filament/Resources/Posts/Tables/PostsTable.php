@@ -6,6 +6,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ColorColumn;
@@ -14,6 +16,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Checkbox;
 use Illuminate\Database\Eloquent\Builder;
 
 
@@ -73,8 +76,31 @@ class PostsTable
                     ->preload(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                ReplicateAction::make()
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('warning')
+                    ->beforeReplicaSaved(function ($replica) {
+                        $replica->slug = $replica->slug . '-copy-' . uniqid();
+                    }),
+                EditAction::make()
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('warning'),
+                DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger'),
+                Action::make('status')
+                    ->label('status change')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->successNotificationTitle('Post status updated successfully!')
+                    ->schema([
+                        Checkbox::make('published')
+                            ->default(fn ($record): bool => (bool) $record->published),
+                    ])
+                    ->action(function ($record, $data) {
+                        $record->update(['published' => $data['published']]);
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

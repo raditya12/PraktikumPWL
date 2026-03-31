@@ -32,7 +32,7 @@ public static function configure(Schema $schema): Schema
                         ->required()
                         ->minLength(5)
                         ->validationMessages([
-                            'min' => 'Judul terlalu pendek, minimal 5 karakter',
+                            'min' => 'minimal 5 karakter',
                         ]),
                     TextInput::make('slug')
                         ->required()
