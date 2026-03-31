@@ -15,6 +15,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Components\Group;
+use App\Models\Category;
 
 
 class PostForm
@@ -28,23 +29,16 @@ public static function configure(Schema $schema): Schema
                 ->description("Fill in the details of the post")
                 ->icon('heroicon-o-pencil-square')
                 ->schema([
-                    TextInput::make('title')
-                        ->required()
-                        ->minLength(5)
+                    TextInput::make("title")
+                        ->rules('required | min:3 | max:10'),
+                    TextInput::make("slug")
+                        ->rules('required')
+                        ->unique()
                         ->validationMessages([
-                            'min' => 'minimal 5 karakter',
+                            "unique" => "Slug must be unique"
                         ]),
-                    TextInput::make('slug')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->minLength(3)
-                        ->live(onBlur: true)
-                        ->validationMessages([
-                            'unique' => 'Slug sudah digunakan, coba yang lain',
-                            'min' => 'Slug minimal 3 karakter',
-                        ]),
-                    Select::make('category_id')
-                        ->relationship('category', 'name')
+                    Select::make("category_id")
+                        ->relationship("category", "name")
                         ->required()
                         ->preload()
                         ->searchable(),

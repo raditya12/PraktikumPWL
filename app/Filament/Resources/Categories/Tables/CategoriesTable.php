@@ -16,6 +16,9 @@ class CategoriesTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('slug'),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
