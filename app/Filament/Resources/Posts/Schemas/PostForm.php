@@ -12,6 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Components\Group;
@@ -63,9 +64,14 @@ public static function configure(Schema $schema): Schema
                 Section::make("Meta Information")
                     ->icon('heroicon-o-cloud-arrow-up')
                     ->schema([
-                        TagsInput::make("tags"),
+                        // TagsInput::make("tags"),
+                        Select::make("tags")
+                            ->relationship("tags", "name")
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
                         Checkbox::make("published"),
-                        DatePicker::make("published_at"),
+                        DateTimePicker::make("published_at"),
                     ]),
             ])->columnSpan(1),
 
